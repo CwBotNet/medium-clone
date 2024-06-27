@@ -3,23 +3,30 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { factory } from "../utils";
 import { sign, verify } from "hono/jwt";
 import bcrypt from "bcryptjs";
-
+import { signInInput, signUpInput } from "@rajsahani/medium-common";
 const signUpUser = factory.createHandlers(async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const { name, email, password } = await c.req.json();
+  const body = await c.req.json();
+  // zod validation
+  const { success } = signUpInput.safeParse(body);
+
+  if (!success) {
+    c.status(400);
+    return c.json({ error: "invalid Input" });
+  }
 
   try {
     // password encryption before user signup
     const saltRounds = bcrypt.genSaltSync(10);
-    const hashPassword = bcrypt.hashSync(password, saltRounds);
+    const hashPassword = bcrypt.hashSync(body.password, saltRounds);
 
     const user = await prisma.user.create({
       data: {
-        name,
-        email,
+        name: body?.name,
+        email: body.email,
         password: hashPassword,
       },
     });
@@ -37,11 +44,19 @@ const signInUser = factory.createHandlers(async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
-  const { email, password } = await c.req.json();
+  const body = await c.req.json();
+
+  // zod validation
+  const { success } = signInInput.safeParse(body);
+
+  if (!success) {
+    c.status(400);
+    return c.json({ error: "invalid Input" });
+  }
   try {
     const user = await prisma.user.findUnique({
       where: {
-        email: email,
+        email: body.email,
       },
     });
 
@@ -51,7 +66,7 @@ const signInUser = factory.createHandlers(async (c) => {
     }
 
     // hash Pass check
-    const passCheck = bcrypt.compareSync(password, user?.password || "");
+    const passCheck = bcrypt.compareSync(body.password, user?.password || "");
 
     if (!passCheck) {
       c.status(403);
