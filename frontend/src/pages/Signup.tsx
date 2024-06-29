@@ -2,8 +2,7 @@
 const Signup = () => {
     return (
         <div className="">
-            <div className="flex">
-
+            <div className="flex ">
                 <div className="flex flex-col items-center justify-center w-[50vw]">
                     <div className="space-y-1 flex flex-col items-center">
                         <h1 className="text-5xl font-bold">Create an account</h1>
