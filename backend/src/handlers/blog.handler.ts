@@ -70,7 +70,18 @@ const getUserBlogs = factory.createHandlers(async (c) => {
   }).$extends(withAccelerate());
 
   try {
-    const blog = await prisma.post.findMany({});
+    const blog = await prisma.post.findMany({
+      select: {
+        id: true,
+        content: true,
+        title: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
 
     if (!blog) {
       c.status(404);
