@@ -3,10 +3,8 @@ import { factory } from "../utils";
 
 const authCheck = factory.createMiddleware(async (c, next) => {
   const header = c.req.header("authorization") || "";
-  const token = header.split(" ")[1];
 
-  const user = await verify(token, c.env.JWT_SECRET);
-
+  const user = await verify(header, c.env.JWT_SECRET);
   if (!user) {
     c.status(403);
     return c.json({ error: "not a valid token" });

@@ -1,9 +1,34 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { Label } from "./ui/Lable"
+import { useState } from "react";
+import { SignUpType } from "@rajsahani/medium-common";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
 
 export const Auth = ({ type }: {
     type: "signin" | "signup"
 }) => {
+
+    const navigate = useNavigate();
+
+    const [userInputs, setUserInputs] = useState<SignUpType>({
+        name: "",
+        email: "",
+        password: ""
+    })
+
+
+    const sendRequest = async () => {
+        try {
+            const response = await axios.post(`${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`, userInputs);
+            const jwt = await response.data;
+            localStorage.setItem("token", jwt);
+            navigate("/blogs");
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
     return (
         <>
             <div className="h-screen flex justify-center items-center">
@@ -20,13 +45,28 @@ export const Auth = ({ type }: {
                         </div>
                     </div>
                     <div className="mt-4 flex flex-col space-y-2">
-                        {type === "signup" ? <Label label="Name" placeholder="Enter your name" onChange={() => null} /> : null}
+                        {type === "signup" ? <Label label="Name" placeholder="Enter your name" onChange={(e) => {
+                            setUserInputs({
+                                ...userInputs,
+                                name: e.target.value
+                            })
+                        }} /> : null}
 
-                        <Label label="Email" placeholder="Enter your email" onChange={() => null} type="email" />
-                        <Label label="Password" placeholder="Enter your password" onChange={() => null} type="password" />
+                        <Label label="Email" placeholder="Enter your email" onChange={(e) => {
+                            setUserInputs({
+                                ...userInputs,
+                                email: e.target.value
+                            })
+                        }} type="email" />
+                        <Label label="Password" placeholder="Enter your password" onChange={(e) => {
+                            setUserInputs({
+                                ...userInputs,
+                                password: e.target.value
+                            })
+                        }} type="password" />
                     </div>
                     <div>
-                        <button className="bg-black text-white rounded-md w-full p-3 mt-2">
+                        <button onClick={sendRequest} className="bg-black text-white rounded-md w-full p-3 mt-2">
                             {type === "signin" ? "Sign in" : "Sign up"}
                         </button>
                     </div>

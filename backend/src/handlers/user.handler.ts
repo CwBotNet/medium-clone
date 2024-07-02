@@ -1,9 +1,10 @@
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { factory } from "../utils";
-import { sign, verify } from "hono/jwt";
+import { sign } from "hono/jwt";
 import bcrypt from "bcryptjs";
 import { signInInput, signUpInput } from "@rajsahani/medium-common";
+
 const signUpUser = factory.createHandlers(async (c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
@@ -32,7 +33,7 @@ const signUpUser = factory.createHandlers(async (c) => {
     });
 
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-    return c.json({ token: jwt });
+    return c.text(jwt);
   } catch (error: any) {
     console.log(error.message);
     c.status(403);
@@ -54,7 +55,7 @@ const signInUser = factory.createHandlers(async (c) => {
     return c.json({ error: "invalid Input" });
   }
   try {
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findFirst({
       where: {
         email: body.email,
       },
@@ -75,15 +76,12 @@ const signInUser = factory.createHandlers(async (c) => {
 
     console.log({ passCheck: passCheck });
 
-    const header = c.req.header("authorization") || "";
-
-    const token = header.split(" ")[1];
-    const userVerify = await verify(token, c.env.JWT_SECRET);
+    const userVerify = await sign({ id: user.id }, c.env.JWT_SECRET);
     if (!userVerify) {
       c.status(403);
-      return c.json({ error: "not veerified user" });
+      return c.json({ error: "not verified user" });
     }
-    return c.json({ response: "success", user: user.id }, 200);
+    return c.text(userVerify);
   } catch (error: any) {
     console.log(error.message);
     c.status(403);

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom"
 
 type Props = {
 
-    id: number,
+    id: string,
     title: string,
     content: string,
     autherName?: string

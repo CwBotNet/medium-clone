@@ -14,7 +14,7 @@ const postBlogHandler = factory.createHandlers(async (c) => {
   // user id from middleware context
   const userId = c.get("userId");
   const body = await c.req.json();
-
+  console.log(userId);
   // zod validation
   const { success } = createPostInput.safeParse(body);
 
@@ -49,6 +49,16 @@ const getBlogById = factory.createHandlers(async (c) => {
     const blog = await prisma.post.findUnique({
       where: {
         id: c.req.param("id"),
+      },
+      select: {
+        id: true,
+        content: true,
+        title: true,
+        author: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 

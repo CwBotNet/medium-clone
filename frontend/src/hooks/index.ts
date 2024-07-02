@@ -18,16 +18,16 @@ export const useBlog = ({ id }: { id: string }) => {
 
   useEffect(() => {
     axios
-      .get(`${BACKEND_URL}/blog/${id}`, {
+      .get(`${BACKEND_URL}/api/v1/blog/${id}`, {
         headers: {
           Authorization: localStorage.getItem("token"),
         },
       })
       .then((res) => {
-        setBlog(res.data.data);
+        setBlog(res.data.response);
         setLoading(false);
       });
-  });
+  }, [id]);
 
   return {
     loading,
@@ -41,16 +41,16 @@ export const useBlogs = () => {
 
   useEffect(() => {
     axios
-      .get(`${BACKEND_URL}/blog/bulk`, {
+      .get(`${BACKEND_URL}/api/v1/blog/bulk`, {
         headers: {
           Authorization: localStorage.getItem("token"),
         },
       })
       .then((res) => {
-        setBlogs(res.data.data);
+        setBlogs(res.data.response);
         setLoading(false);
       });
-  });
+  }, []);
 
   return {
     loading,

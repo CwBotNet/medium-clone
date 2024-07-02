@@ -7,7 +7,7 @@ const app = new Hono<{
   Bindings: Env;
 }>().basePath("/api/v1");
 
-app.use("/api/*", cors());
+app.use("/*", cors());
 
 // healthCheckRoute
 app.get("/healthcheck", (c) => {
