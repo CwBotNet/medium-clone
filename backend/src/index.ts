@@ -11,7 +11,7 @@ app.use("/*", cors());
 
 // healthCheckRoute
 app.get("/healthcheck", (c) => {
-  return c.text(c.env.DATABASE_URL);
+  return c.text("healthy server");
 });
 
 // routing
