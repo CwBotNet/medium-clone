@@ -13,7 +13,7 @@ export const AppBar = ({ type }: App) => {
                     <div>
                         <Link to={type === "home" ? "/" : "/blogs"} className="text-3xl font-bold capitalize">medium</Link>
                     </div>
-                    <div className="flex items-center gap-4 ">
+                    <div className="flex items-center gap-x-4 ">
                         <Link to={"/signin"} className="hidden md:block text-lg font-medium underline cursor-pointer">signin</Link>
                         <Link to={"/signup"} >
                             <button type="button" className="mr-4  text-white bg-neutral-900 hover:bg-neutral-950 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2 ">Get Started</button>

@@ -1,12 +1,13 @@
 import { Link } from "react-router-dom";
 import { AppBar } from "../components/AppBar";
+import Footer from "../components/Footer";
 
 export default function Home() {
 
     return (
         <div>
             <AppBar type="home" />
-            <div className=" p-4 flex justify-center items-center min-h-screen">
+            <div className=" p-4 flex justify-center items-center h-[80svh]">
                 <div className="flex-col flex gap-6">
                     <h1 className="font-bold text-8xl">
                         Human
@@ -20,6 +21,7 @@ export default function Home() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 }
